@@ -8,7 +8,7 @@ local context_manager = require("plenary.context_manager")
 local open = context_manager.open
 local with = context_manager.with
 
-local package_query = vim.treesitter.parse_query(
+local package_query = vim.treesitter.query.parse(
   "java",
   [[
 (package_declaration (identifier) @package.name)
