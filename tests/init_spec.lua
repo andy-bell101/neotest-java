@@ -1,4 +1,4 @@
-local async = require("plenary.async.tests")
+local async = require("nio.tests")
 local plugin = require("neotest-java")
 local Tree = require("neotest.types").Tree
 local Path = require("plenary.path")
