@@ -263,7 +263,13 @@ function M.results(spec, _, _)
       end
 
       for _, testcase in pairs(testcases) do
-        local name = testsuite._attr.name .. "." .. testcase._attr.name
+        local method_name = testcase._attr.name
+        -- JUnit5 seems to output to the XML like "method_name()" instead of
+        -- "method_name" like in JUnit 4, so we have to trim off the brackets
+        if method_name:match("()$") then
+          method_name = method_name:sub(1, #method_name - 2)
+        end
+        local name = testsuite._attr.name .. "." .. method_name
         if testcase.failure then
           results[name] = {
             status = "failed",
