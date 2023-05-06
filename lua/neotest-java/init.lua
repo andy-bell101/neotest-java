@@ -138,7 +138,7 @@ function M.discover_positions(file_path)
     ((method_declaration
         (modifiers
             (marker_annotation name: (identifier) @marker)
-            (#eq? @marker "Test")
+            (#any-of? @marker "Test")
         )
         name: (identifier) @test.name
         body: (block) @test.definition))
