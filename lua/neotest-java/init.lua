@@ -293,11 +293,23 @@ Settings = {
   force_runner = nil,
 }
 
+-- https://stackoverflow.com/a/58795138
+local function iscallable(x)
+    if type(x) == 'function' then
+        return true
+    elseif type(x) == 'table' then
+        local mt = getmetatable(x)
+        return type(mt) == "table" and type(mt.__call) == "function"
+    else
+        return false
+    end
+end
+
 setmetatable(M, {
   __call = function(_, opts)
     local setter = function(key, value)
       if value then
-        if is_callable(value) then
+        if iscallable(value) then
           Settings[key] = value
         else
           Settings[key] = function()
