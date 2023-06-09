@@ -363,7 +363,7 @@ describe("build_spec", function()
       return data.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "mvn Dtest=subdir.FileWithTests#passing_test test")
+    assert.equals(spec.command, "mvn test -Dtest=subdir.FileWithTests#passing_test")
   end)
   async.it("maven - successful on single namespace", function()
     local tree = Tree.from_list({
@@ -396,7 +396,7 @@ describe("build_spec", function()
       return data.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "mvn Dtest=subdir.FileWithTests test")
+    assert.equals(spec.command, "mvn test -Dtest=subdir.FileWithTests")
   end)
   async.it("maven - runs on entire file in subdir", function()
     local tree = Tree.from_list({
@@ -438,7 +438,7 @@ describe("build_spec", function()
       return x.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "mvn Dtest=subdir.FileWithTests test")
+    assert.equals(spec.command, "mvn test -Dtest=subdir.FileWithTests")
   end)
   async.it("maven - runs on entire directory", function()
     local dir = path_join(maven_files.root, "src", "test", "java", "subdir")
@@ -523,7 +523,7 @@ describe("build_spec", function()
       return x.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "mvn Dtest=subdir.FileWithTests,subdir.AnotherFileWithTests test")
+    assert.equals(spec.command, "mvn test -Dtest=subdir.FileWithTests,subdir.AnotherFileWithTests")
   end)
 end)
 
