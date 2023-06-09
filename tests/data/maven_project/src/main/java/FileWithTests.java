@@ -1,5 +1,5 @@
-public class Junk {
-    public boolean some_result() {
-        return true;
-    }
+public class FileWithTests {
+  public boolean some_result() {
+    return true;
+  }
 }
