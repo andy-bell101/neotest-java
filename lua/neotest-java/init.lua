@@ -223,8 +223,8 @@ function M.build_spec(args)
       "mvn",
     }
     local maven_args = get_maven_args_for_position(position, tree)
-    local joined_args = "Dtest=" .. table.concat(maven_args, ",")
-    vim.list_extend(command, { joined_args, "test" })
+    local joined_args = "-Dtest=" .. table.concat(maven_args, ",")
+    vim.list_extend(command, { "test", joined_args })
   end
   local output = {
     command = table.concat(command, " "),
