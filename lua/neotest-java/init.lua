@@ -8,10 +8,14 @@ local context_manager = require("plenary.context_manager")
 local open = context_manager.open
 local with = context_manager.with
 
+-- java package query is different for single level names
+-- single level package should be (package_declaration (identifier))
+-- multi level package should be (package_declaration (scoped_identifier))
+-- easier to grab whole package line and strip unnessary chars
 local package_query = vim.treesitter.query.parse(
   "java",
   [[
-(package_declaration (identifier) @package.name)
+(package_declaration) @package.name
 ]]
 )
 
@@ -86,7 +90,8 @@ function M.build_position(file_path, source, captured_nodes)
       local syntax_tree = language_tree:parse()
       local root = syntax_tree[1]:root()
       for _, captures, _ in package_query:iter_captures(root, source) do
-        local package_name = vim.treesitter.get_node_text(captures, source)
+        local package_line = vim.treesitter.get_node_text(captures, source)
+        local _, _, package_name = string.find(package_line, "%s*package%s*([^;]+);")
         name = package_name .. "." .. name
       end
     end
@@ -295,14 +300,14 @@ Settings = {
 
 -- https://stackoverflow.com/a/58795138
 local function iscallable(x)
-    if type(x) == 'function' then
-        return true
-    elseif type(x) == 'table' then
-        local mt = getmetatable(x)
-        return type(mt) == "table" and type(mt.__call) == "function"
-    else
-        return false
-    end
+  if type(x) == "function" then
+    return true
+  elseif type(x) == "table" then
+    local mt = getmetatable(x)
+    return type(mt) == "table" and type(mt.__call) == "function"
+  else
+    return false
+  end
 end
 
 setmetatable(M, {

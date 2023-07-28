@@ -16,6 +16,25 @@ local function get_paths(data_dir)
     single_test_file = path_join(data_dir, "src", "test", "java", "FileWithSingleTest.java"),
     multi_test_file = path_join(data_dir, "src", "test", "java", "FileWithTests.java"),
     subdir_test_file = path_join(data_dir, "src", "test", "java", "subdir", "FileWithTests.java"),
+    sub_subdir_test_file = path_join(
+      data_dir,
+      "src",
+      "test",
+      "java",
+      "subdir",
+      "sub_subdir",
+      "FileWithTests.java"
+    ),
+    sub_sub_subdir_test_file = path_join(
+      data_dir,
+      "src",
+      "test",
+      "java",
+      "subdir",
+      "sub_subdir",
+      "sub_sub_subdir",
+      "FileWithTests.java"
+    ),
     subdir_other_test_file = path_join(
       data_dir,
       "src",
@@ -166,6 +185,86 @@ describe("discover_positions", function()
       },
     }
     local result = plugin.discover_positions(gradle_files.subdir_test_file):to_list()
+    assert.are.same(expected, result)
+  end)
+  async.it("file in sub-sub package parsed correctly", function()
+    local expected = {
+      {
+        id = gradle_files.sub_subdir_test_file,
+        name = "FileWithTests.java",
+        path = gradle_files.sub_subdir_test_file,
+        range = { 0, 0, 17, 0 },
+        type = "file",
+      },
+      {
+        {
+          id = "subdir.sub_subdir.FileWithTests",
+          name = "subdir.sub_subdir.FileWithTests",
+          path = gradle_files.sub_subdir_test_file,
+          range = { 6, 0, 16, 1 },
+          type = "namespace",
+        },
+        {
+          {
+            id = "subdir.sub_subdir.FileWithTests.passing_test",
+            name = "passing_test",
+            path = gradle_files.sub_subdir_test_file,
+            range = { 8, 31, 10, 5 },
+            type = "test",
+          },
+        },
+        {
+          {
+            id = "subdir.sub_subdir.FileWithTests.failing_test",
+            name = "failing_test",
+            path = gradle_files.sub_subdir_test_file,
+            range = { 13, 31, 15, 5 },
+            type = "test",
+          },
+        },
+      },
+    }
+    local result = plugin.discover_positions(gradle_files.sub_subdir_test_file):to_list()
+    assert.are.same(expected, result)
+  end)
+  async.it("file in sub-sub-sub package parsed correctly", function()
+    local expected = {
+      {
+        id = gradle_files.sub_sub_subdir_test_file,
+        name = "FileWithTests.java",
+        path = gradle_files.sub_sub_subdir_test_file,
+        range = { 0, 0, 17, 0 },
+        type = "file",
+      },
+      {
+        {
+          id = "subdir.sub_subdir.sub_sub_subdir.FileWithTests",
+          name = "subdir.sub_subdir.sub_sub_subdir.FileWithTests",
+          path = gradle_files.sub_sub_subdir_test_file,
+          range = { 6, 0, 16, 1 },
+          type = "namespace",
+        },
+        {
+          {
+            id = "subdir.sub_subdir.sub_sub_subdir.FileWithTests.passing_test",
+            name = "passing_test",
+            path = gradle_files.sub_sub_subdir_test_file,
+            range = { 8, 31, 10, 5 },
+            type = "test",
+          },
+        },
+        {
+          {
+            id = "subdir.sub_subdir.sub_sub_subdir.FileWithTests.failing_test",
+            name = "failing_test",
+            path = gradle_files.sub_sub_subdir_test_file,
+            range = { 13, 31, 15, 5 },
+            type = "test",
+          },
+        },
+      },
+    }
+    local result = plugin.discover_positions(gradle_files.sub_sub_subdir_test_file):to_list()
     assert.are.same(expected, result)
   end)
 end)
