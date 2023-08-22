@@ -43,13 +43,13 @@ end
 
 --- Determine which test runner to use (gradle or maven)
 -- @param root plenary.Path
-function determine_runner(root)
+function Determine_runner(root)
   local fallback = Settings.fallback_runner
   if Settings.force_runner then
     logger.info("Using enforced runner " .. Settings.force_runner)
     return Settings.force_runner
   end
-  local gradle_file = get_gradle_file(root)
+  local gradle_file = Get_gradle_file(root)
   local maven_file = (root / "pom.xml")
   local gradle_exists = gradle_file:exists()
   local maven_exists = maven_file:exists()
@@ -76,10 +76,25 @@ function determine_runner(root)
   end
 end
 
+local function find_gradle_executable(root)
+  local uname = vim.loop.os_uname()
+  local gradlew
+  if uname.sysname:find("Windows") then
+    gradlew = root / "gradlew.bat"
+  else
+    gradlew = root / "gradlew"
+  end
+  if gradlew:exists() then
+    return gradlew
+  else
+    return "gradle"
+  end
+end
+
 -- Find the gradle build file in the project root. Prefers Groovy
 -- over Kotlin, just like Gradle does
 -- @param root root directory of the project
-function get_gradle_file(root)
+function Get_gradle_file(root)
   local gradle_groovy_build_file = (root / "build.gradle")
   local gradle_kotlin_build_file = (root / "build.gradle.kts")
   if gradle_groovy_build_file:exists() then
@@ -232,7 +247,7 @@ function M.build_spec(args)
   local runner = Settings.determine_runner(Path:new(M.root(position.path)))
   if runner == "gradle" then
     command = {
-      "gradle",
+      find_gradle_executable(M.root(position.path)),
       "test",
     }
     vim.list_extend(command, get_gradle_args_for_position(position, tree))
@@ -306,7 +321,7 @@ function M.results(spec, _, _)
 end
 
 Settings = {
-  determine_runner = determine_runner,
+  determine_runner = Determine_runner,
   fallback_runner = "gradle",
   force_runner = nil,
 }
