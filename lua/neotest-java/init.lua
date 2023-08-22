@@ -49,7 +49,7 @@ function determine_runner(root)
     logger.info("Using enforced runner " .. Settings.force_runner)
     return Settings.force_runner
   end
-  local gradle_file = (root / "build.gradle")
+  local gradle_file = get_gradle_file(root)
   local maven_file = (root / "pom.xml")
   local gradle_exists = gradle_file:exists()
   local maven_exists = maven_file:exists()
@@ -73,6 +73,19 @@ function determine_runner(root)
         .. fallback
     )
     return fallback
+  end
+end
+
+-- Find the gradle build file in the project root. Prefers Groovy
+-- over Kotlin, just like Gradle does
+-- @param root root directory of the project
+function get_gradle_file(root)
+  local gradle_groovy_build_file = (root / "build.gradle")
+  local gradle_kotlin_build_file = (root / "build.gradle.kts")
+  if gradle_groovy_build_file:exists() then
+    return gradle_groovy_build_file
+  else
+    return gradle_kotlin_build_file
   end
 end
 
