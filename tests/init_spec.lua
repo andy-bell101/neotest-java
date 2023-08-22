@@ -50,6 +50,7 @@ local function get_paths(data_dir)
 end
 local gradle_files = get_paths(path_join(cwd, "tests", "data", "gradle_project"))
 local maven_files = get_paths(path_join(cwd, "tests", "data", "maven_project"))
+local gradlew_files = get_paths(path_join(cwd, "tests", "data", "gradlew_project"))
 
 describe("root", function()
   async.it("finds root dir correctly for Gradle project", function()
@@ -447,6 +448,189 @@ describe("build_spec", function()
     assert.equals(
       spec.command,
       "gradle test --tests 'subdir.FileWithTests.*' --tests 'subdir.AnotherFileWithTests.*'"
+    )
+  end)
+  async.it("gradlew - successful for single function", function()
+    local tree = Tree.from_list({
+      {
+        id = "subdir.FileWithTests.passing_test",
+        name = "passing_test",
+        path = gradlew_files.subdir_test_file,
+        range = { 8, 31, 10, 5 },
+        type = "test",
+      },
+    }, function(data)
+      return data.id
+    end)
+    local spec = plugin.build_spec({ tree = tree })
+    local gradlew_path = gradlew_files.root .. sep .. "gradlew"
+    assert.equals(spec.command, gradlew_path .. " test --tests 'subdir.FileWithTests.passing_test'")
+  end)
+  async.it("gradlew - successful on single namespace", function()
+    local tree = Tree.from_list({
+      {
+        id = "subdir.FileWithTests",
+        name = "subdir.FileWithTests",
+        path = gradlew_files.subdir_test_file,
+        range = { 6, 0, 16, 1 },
+        type = "namespace",
+      },
+      {
+        {
+          id = "subdir.FileWithTests.passing_test",
+          name = "passing_test",
+          path = gradlew_files.subdir_test_file,
+          range = { 8, 31, 10, 5 },
+          type = "test",
+        },
+      },
+      {
+        {
+          id = "subdir.FileWithTests.failing_test",
+          name = "failing_test",
+          path = gradlew_files.subdir_test_file,
+          range = { 13, 31, 15, 5 },
+          type = "test",
+        },
+      },
+    }, function(data)
+      return data.id
+    end)
+    local spec = plugin.build_spec({ tree = tree })
+    local gradlew_path = gradlew_files.root .. sep .. "gradlew"
+    assert.equals(spec.command, gradlew_path .. " test --tests 'subdir.FileWithTests.*'")
+  end)
+  async.it("gradlew - runs on entire file in subdir", function()
+    local tree = Tree.from_list({
+      {
+        id = gradlew_files.subdir_test_file,
+        name = "FileWithTests.java",
+        path = gradlew_files.subdir_test_file,
+        range = { 0, 0, 17, 0 },
+        type = "file",
+      },
+      {
+        {
+          id = "subdir.FileWithTests",
+          name = "subdir.FileWithTests",
+          path = gradlew_files.subdir_test_file,
+          range = { 6, 0, 16, 1 },
+          type = "namespace",
+        },
+        {
+          {
+            id = "subdir.FileWithTests.passing_test",
+            name = "passing_test",
+            path = gradlew_files.subdir_test_file,
+            range = { 8, 31, 10, 5 },
+            type = "test",
+          },
+        },
+        {
+          {
+            id = "subdir.FileWithTests.failing_test",
+            name = "failing_test",
+            path = gradlew_files.subdir_test_file,
+            range = { 13, 31, 15, 5 },
+            type = "test",
+          },
+        },
+      },
+    }, function(x)
+      return x.id
+    end)
+    local spec = plugin.build_spec({ tree = tree })
+    local gradlew_path = gradlew_files.root .. sep .. "gradlew"
+    assert.equals(spec.command, gradlew_path .. " test --tests 'subdir.FileWithTests.*'")
+  end)
+  async.it("gradlew - runs on entire directory", function()
+    local dir = path_join(gradlew_files.root, "src", "test", "java", "subdir")
+    local tree = Tree.from_list({
+      {
+        id = dir,
+        name = dir,
+        path = dir,
+        type = "dir",
+      },
+      {
+        {
+          id = gradlew_files.subdir_test_file,
+          name = "FileWithTests.java",
+          path = gradlew_files.subdir_test_file,
+          range = { 0, 0, 17, 0 },
+          type = "file",
+        },
+        {
+          {
+            id = "subdir.FileWithTests",
+            name = "subdir.FileWithTests",
+            path = gradlew_files.subdir_test_file,
+            range = { 6, 0, 16, 1 },
+            type = "namespace",
+          },
+          {
+            {
+              id = "subdir.FileWithTests.passing_test",
+              name = "passing_test",
+              path = gradlew_files.subdir_test_file,
+              range = { 8, 31, 10, 5 },
+              type = "test",
+            },
+          },
+          {
+            {
+              id = "subdir.FileWithTests.failing_test",
+              name = "failing_test",
+              path = gradlew_files.subdir_test_file,
+              range = { 13, 31, 15, 5 },
+              type = "test",
+            },
+          },
+        },
+        {
+          id = gradlew_files.subdir_other_test_file,
+          name = "AnotherFileWithTests.java",
+          path = gradlew_files.subdir_other_test_file,
+          range = { 0, 0, 17, 0 },
+          type = "file",
+        },
+        {
+          {
+            id = "subdir.AnotherFileWithTests",
+            name = "subdir.AnotherFileWithTests",
+            path = gradlew_files.subdir_other_test_file,
+            range = { 6, 0, 16, 1 },
+            type = "namespace",
+          },
+          {
+            {
+              id = "subdir.AnotherFileWithTests.passing_test",
+              name = "passing_test",
+              path = gradlew_files.subdir_other_test_file,
+              range = { 8, 31, 10, 5 },
+              type = "test",
+            },
+          },
+          {
+            {
+              id = "subdir.AnotherFileWithTests.failing_test",
+              name = "failing_test",
+              path = gradlew_files.subdir_other_test_file,
+              range = { 13, 31, 15, 5 },
+              type = "test",
+            },
+          },
+        },
+      },
+    }, function(x)
+      return x.id
+    end)
+    local spec = plugin.build_spec({ tree = tree })
+    local gradlew_path = gradlew_files.root .. sep .. "gradlew"
+    assert.equals(
+      spec.command,
+      gradlew_path
+        .. " test --tests 'subdir.FileWithTests.*' --tests 'subdir.AnotherFileWithTests.*'"
     )
   end)
   async.it("maven - successful for single function", function()

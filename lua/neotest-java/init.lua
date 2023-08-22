@@ -85,7 +85,7 @@ local function find_gradle_executable(root)
     gradlew = root / "gradlew"
   end
   if gradlew:exists() then
-    return gradlew
+    return tostring(gradlew)
   else
     return "gradle"
   end
