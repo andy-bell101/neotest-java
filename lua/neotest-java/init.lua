@@ -244,10 +244,11 @@ function M.build_spec(args)
   local tree = args.tree
   local position = tree:data()
   local command
-  local runner = Settings.determine_runner(Path:new(M.root(position.path)))
+  local root_path = Path:new(M.root(position.path))
+  local runner = Settings.determine_runner(root_path)
   if runner == "gradle" then
     command = {
-      find_gradle_executable(M.root(position.path)),
+      find_gradle_executable(root_path),
       "test",
     }
     vim.list_extend(command, get_gradle_args_for_position(position, tree))
