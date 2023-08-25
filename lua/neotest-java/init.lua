@@ -146,7 +146,7 @@ function M.position_id(position, namespaces)
 end
 
 -- Neotest interface funcs
-M.root = lib.files.match_root_pattern("gradlew", "mvnw", "pom.xml", "build.gradle", ".git")
+M.root = lib.files.match_root_pattern("gradlew", "mvnw", "pom.xml", "build.gradle")
 
 --- Figure out if given file is a test file
 -- @param file_path string
