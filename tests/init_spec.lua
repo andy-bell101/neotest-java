@@ -285,7 +285,7 @@ describe("build_spec", function()
       return data.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "gradle test --tests 'subdir.FileWithTests.passing_test'")
+    assert.equals(spec.command, 'gradle test --tests "subdir.FileWithTests.passing_test"')
   end)
   async.it("gradle - successful on single namespace", function()
     local tree = Tree.from_list({
@@ -318,7 +318,7 @@ describe("build_spec", function()
       return data.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "gradle test --tests 'subdir.FileWithTests.*'")
+    assert.equals(spec.command, 'gradle test --tests "subdir.FileWithTests.*"')
   end)
   async.it("gradle - runs on entire file in subdir", function()
     local tree = Tree.from_list({
@@ -360,7 +360,7 @@ describe("build_spec", function()
       return x.id
     end)
     local spec = plugin.build_spec({ tree = tree })
-    assert.equals(spec.command, "gradle test --tests 'subdir.FileWithTests.*'")
+    assert.equals(spec.command, 'gradle test --tests "subdir.FileWithTests.*"')
   end)
   async.it("gradle - runs on entire directory", function()
     local dir = path_join(gradle_files.root, "src", "test", "java", "subdir")
@@ -447,7 +447,7 @@ describe("build_spec", function()
     local spec = plugin.build_spec({ tree = tree })
     assert.equals(
       spec.command,
-      "gradle test --tests 'subdir.FileWithTests.*' --tests 'subdir.AnotherFileWithTests.*'"
+      'gradle test --tests "subdir.FileWithTests.*" --tests "subdir.AnotherFileWithTests.*"'
     )
   end)
   async.it("gradlew - successful for single function", function()
@@ -464,7 +464,7 @@ describe("build_spec", function()
     end)
     local spec = plugin.build_spec({ tree = tree })
     local gradlew_path = gradlew_files.root .. sep .. "gradlew"
-    assert.equals(spec.command, gradlew_path .. " test --tests 'subdir.FileWithTests.passing_test'")
+    assert.equals(spec.command, gradlew_path .. ' test --tests "subdir.FileWithTests.passing_test"')
   end)
   async.it("gradlew - successful on single namespace", function()
     local tree = Tree.from_list({
@@ -498,7 +498,7 @@ describe("build_spec", function()
     end)
     local spec = plugin.build_spec({ tree = tree })
     local gradlew_path = gradlew_files.root .. sep .. "gradlew"
-    assert.equals(spec.command, gradlew_path .. " test --tests 'subdir.FileWithTests.*'")
+    assert.equals(spec.command, gradlew_path .. ' test --tests "subdir.FileWithTests.*"')
   end)
   async.it("gradlew - runs on entire file in subdir", function()
     local tree = Tree.from_list({
@@ -541,7 +541,7 @@ describe("build_spec", function()
     end)
     local spec = plugin.build_spec({ tree = tree })
     local gradlew_path = gradlew_files.root .. sep .. "gradlew"
-    assert.equals(spec.command, gradlew_path .. " test --tests 'subdir.FileWithTests.*'")
+    assert.equals(spec.command, gradlew_path .. ' test --tests "subdir.FileWithTests.*"')
   end)
   async.it("gradlew - runs on entire directory", function()
     local dir = path_join(gradlew_files.root, "src", "test", "java", "subdir")
@@ -630,7 +630,7 @@ describe("build_spec", function()
     assert.equals(
       spec.command,
       gradlew_path
-        .. " test --tests 'subdir.FileWithTests.*' --tests 'subdir.AnotherFileWithTests.*'"
+        .. ' test --tests "subdir.FileWithTests.*" --tests "subdir.AnotherFileWithTests.*"'
     )
   end)
   async.it("maven - successful for single function", function()
