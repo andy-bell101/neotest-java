@@ -203,9 +203,9 @@ end
 -- @param tree neotest.Tree | nil
 local function get_gradle_args_for_position(pos, tree)
   if pos.type == "test" then
-    return { "--tests", "'" .. pos.id .. "'" }
+    return { "--tests", '"' .. pos.id .. '"' }
   elseif pos.type == "namespace" then
-    return { "--tests", "'" .. pos.id .. ".*'" }
+    return { "--tests", '"' .. pos.id .. '.*"' }
   else
     -- file or dir
     local namespaces = find_child_type_in_tree("namespace", tree)
