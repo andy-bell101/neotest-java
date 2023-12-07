@@ -1,5 +1,8 @@
 # neotest-java
 
+> [!CAUTION]
+> [This plugin is deprecated! Use this plugin instead!](https://github.com/rcasia/neotest-java)
+
 [Neotest](https://github.com/rcarriga/neotest) adapter for Java using JUnit.
 Compatible with Gradle and Maven projects.
 
@@ -15,7 +18,7 @@ require("neotest").setup({
 ```
 
 By default, the plugin determines whether you are in a Gradle or Maven project,
-and runs the tests with the appropriate tool. You can customise which runner 
+and runs the tests with the appropriate tool. You can customise which runner
 to use with the following settings:
 
 ```lua
@@ -43,6 +46,6 @@ require("neotest").setup({
 
 - For Gradle, so far only tested on toy projects from Exercism. Needs
   checking against a proper project.
-- No "real" testing for Maven, since I don't know how it works. I have 
+- No "real" testing for Maven, since I don't know how it works. I have
   validated the generated commands against the Maven docs so they should be
   correct but I can't be sure.
